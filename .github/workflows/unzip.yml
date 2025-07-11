@@ -1,6 +1,7 @@
 name: Unzip File
 
 on:
+  workflow_dispatch:   # يضيف زر "Run workflow" في واجهة GitHub
   push:
     branches:
       - main
@@ -18,11 +19,11 @@ jobs:
         run: |
           mkdir extracted
           for file in $(find . -name '*.zip'); do
-            unzip -o "$file" -d extracted/
+            unzip -o "$file" -d extracted
           done
 
       - name: Upload unzipped files (optional)
         uses: actions/upload-artifact@v4
         with:
-          name: unzipped-files
-          path: extracted/
+          name: extracted-files
+          path: extracted
