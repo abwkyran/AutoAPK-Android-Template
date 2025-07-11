@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  # تشغيل يدوي من تبويب Actions
+  workflow_dispatch:
+  # أو كلّما دفعت كوداً على الفرع main
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'   # تجاهل ملفات الـ README وغيرها
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ جلب كود المشروع
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ تنصيب JDK 17 ‏(Temurin)
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3️⃣ إعطاء صلاحية تنفيذ لملف gradlew
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # 4️⃣ بناء نسخة Debug للـ APK
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      # 5️⃣ رفع ملف الـ APK كـ Artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
